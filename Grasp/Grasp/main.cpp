@@ -8,6 +8,7 @@
 #include <chrono>
 #include <thread>
 #include <semaphore>
+#include <mutex>
 
 // parametres
 #define RUNTIME 15				// temps de la boucle (secondes)
@@ -373,8 +374,10 @@ void impressionParPlaque(std::vector<unsigned char>* agencement,
 	// determination du nombre de passage minimum par chaque plaque
 	for (unsigned int plaque = 0; plaque < *nbPlaques; plaque++) {
 		for (unsigned int emplacement = 0; emplacement < *nbEmplacement; emplacement++) {
-			if (nbImpressions->at(plaque) < bufferIteration[agencement->at((plaque * (*nbEmplacement)) + emplacement)]) {
-				nbImpressions->at(plaque) = bufferIteration[agencement->at((plaque * (*nbEmplacement)) + emplacement)];
+			int o = plaque * (*nbEmplacement) + emplacement;
+			if (nbImpressions->at(plaque) < bufferIteration.at(agencement->at(o)))
+			{
+				nbImpressions->at(plaque) = bufferIteration.at(agencement->at(o));
 			}
 		}
 	}
@@ -421,7 +424,7 @@ void generationPlaques(Solution* current, std::vector<float>* poidsImpression, u
 		for (unsigned int j = 0; j < *nbEmplacement; j++) {
 
 			// peuplement des deux premiers
-			if (poidsImpression[1] < poidsImpression[0]) {
+			if (poidsImpression->at(1) < poidsImpression->at(2)) {
 				c1 = 0;
 				c2 = 1;
 			}
